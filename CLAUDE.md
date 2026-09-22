@@ -1,7 +1,8 @@
 # Orientation for an agent working in this repository
 
-Start with `HANDOFF.md` and follow it in order. It points to `docs/SETUP.md` (environment, the single credential,
-weights, data) and `docs/EXPERIMENTS.md` (the runs, fixed settings, evaluation, reference numbers, abort rules).
+Start with `HANDOFF.md` at the repo root and follow it in order (it is delivered separately, git-ignored, together with
+`docs/EXPERIMENTS.md`; if either is missing, stop and ask the human for the handoff bundle). They point to `docs/SETUP.md`
+(environment, the single credential, weights, data).
 Launch only through `runs/*.sh`. Do not edit code; edit the path variables at the top of `runs/env.sh` only.
 Keep `RUNLOG.md` up to date: every command run, its outcome, every FID line, every restart.
 

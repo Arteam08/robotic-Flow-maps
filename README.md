@@ -1,7 +1,7 @@
 # robotic-Flow-maps
 
-Lean, self-contained copy of the EqFM ImageNet code needed for a fixed list of experiments
-(see `docs/EXPERIMENTS.md`, the prescriptive handoff). Everything runs from environment
+Lean, self-contained copy of the EqFM ImageNet code (SiT-XL/2 autonomous fields and flow maps). The
+experiment plan is provided to collaborators separately and is not part of this repository. Everything runs from environment
 variables and a `.env` file: no personal wandb or Hugging Face accounts are needed
 (`docs/SETUP.md`).
 
@@ -17,8 +17,6 @@ What is here
 | `rfm/tracking.py` | credential-free tracking helper (wandb online/offline fallback, `metrics.jsonl`, HF checkpoint upload) |
 | `scripts/hf_download.py`, `scripts/hf_upload.py` | weights in and out of the Hugging Face repos |
 | `tests/` | 85 unit tests (`python -m pytest tests -q`), CPU only |
-| `docs/reference/` | the original remote-cluster handoff and FID/sampler notes, for context only |
 
-The code was exported from the EqFM `handoff` branch (`docs/reference/SOURCE_COMMIT.txt`).
 Conventions that must not change: per-entry **mean** loss reduction, adaptive weight p=1 with eps 1e-3,
 EMA 0.9999, fp32 training (`--no-allow-tf32 --no-bf16 --no-teacher-bf16`), FIDs tagged with evaluator and N.

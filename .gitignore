@@ -11,3 +11,6 @@ offline_runs_*.tar.gz
 manifest.json
 logs/
 upload_spec*.json
+HANDOFF.md
+docs/EXPERIMENTS.md
+RUNLOG.md
