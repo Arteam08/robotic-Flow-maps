@@ -46,9 +46,21 @@ Do not start Phase 3 with a failed check.
 | 5 | `runs/s2_shifted_meanflow_semi.sh` | 80 000 | same as 1 | same as 1 |
 | 6 | `runs/s2_shifted_meanflow_eq_semi.sh` | 80 000 | same as 1 | same as 1 |
 
+**Speed is a requirement, not a preference.** Each experiment must finish as fast as the hardware allows, and no
+GPU may sit idle while an experiment is unfinished. Concretely:
+- Put every GPU on the current run (`NGPU` in `runs/env.sh`). Use the largest per-GPU batch that fits in memory
+  (raise `BS`, lower `ACCUM`, keep `BS * NGPU * ACCUM = 128`); gradient accumulation is a fallback, not a default.
+  Measure the samples/s of two or three settings in the first ten minutes and keep the fastest.
+- Keep the data loader ahead of the GPUs: the log prints `data wait`; if it is above 5 percent, raise
+  `--num-workers` (append it to the launch command) until it is near 0.
+- Run the FID evaluations concurrently on one GPU while training continues on the others only if that GPU is
+  otherwise idle; otherwise run them in the gaps, never by pausing training.
+- Restart a crashed or preempted run immediately (it resumes from `latest.pt`); do not wait for a human.
+- If the machine is shared or has a scheduler, request all GPUs of one node for the run and keep the job
+  running back to back until the last step; do not split a run across small allocations.
+- Record the achieved samples/s and wall-clock per run in `RUNLOG.md`; if it is below the number from your
+  sanity check by more than 20 percent, find out why before continuing.
 Rules while a run is going:
-- All GPUs on the one run (`NGPU` in `runs/env.sh`); the FID script uses one GPU and may run alongside
-  (`CUDA_VISIBLE_DEVICES=<idx> runs/fid_stage2.sh <run> <step>`), or after, if memory is tight.
 - Every 5 000 steps a permanent checkpoint appears under `$RESULTS/<run>/kept/`. Evaluate it, paste the
   `FID-2k` summary lines into `RUNLOG.md` and into the wandb run notes.
 - A crash or a machine restart: re-run the same script; it resumes from `latest.pt` and the log prints the

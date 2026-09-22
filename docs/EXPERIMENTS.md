@@ -8,8 +8,10 @@ and upload, 5 evaluation protocol and reference numbers, 6 compute, 7 abort crit
 
 ## 0. Rules
 
-1. **One experiment at a time.** Give every GPU you have to the run with the highest priority and finish it.
-   Never run two experiments slowly in parallel. Evaluation jobs (section 5) may share the machine.
+1. **One experiment at a time, as fast as the hardware allows.** Give every GPU you have to the run with the
+   highest priority, use the largest per-GPU batch that fits, keep the data loader ahead of the GPUs, and finish
+   the run before starting the next. Never run two experiments slowly in parallel and never leave a GPU idle
+   while an experiment is unfinished. Evaluation jobs (section 5) may share the machine.
 2. **Priority order:** run 1, run 2, run 3, then add-ons A, B, C (section 3). Do not start a lower one before
    the higher one has reached its last step, unless it was aborted under section 7.
 3. **Never change:** global batch 128, EMA 0.9999, adaptive weight p = 1 with eps 1e-3, per-entry mean loss,
