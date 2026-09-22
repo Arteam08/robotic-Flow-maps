@@ -213,17 +213,24 @@ delta to run 1 at the same step for every sampler.
 
 ## 6. Compute
 
-Measured on one L40S at global batch 128, fp32, TF32 off (fill in from your sanity check 2 and 3):
+Measured on one L40S (46 GB), fp32, TF32 off, from the latent cache (2026-09-22):
 
-| run | samples/s per GPU | 4 GPUs, wall time | 8 GPUs |
-|---|---|---|---|
-| runs 1, A, B, C (shifted MeanFlow) | pending (we fill this in) | | |
-| run 2 (shifted Lagrangian) | | | |
-| run 3 (field) | | | |
+| run | per-GPU batch | samples/s per GPU | 10.24M or 25.6M samples on 4 GPUs | on 8 GPUs |
+|---|---|---|---|---|
+| run 3 (field b, SiT-XL/2) | 8 | 24 | | |
+| run 3 (field b, SiT-XL/2) | 16 | 31 | 25.6M / 124 per s = 57 h (2.4 days) | 1.2 days |
+| runs 1, A, B, C (shifted MeanFlow, single JVP) | 4 | pending measurement | | |
+| run 2 (shifted Lagrangian) | 4 | pending measurement | | |
 
-Rule of thumb until measured: Stage-2 about 5 samples/s per L40 -> 10.24M samples in about 6 days on 4 GPUs;
-run 3 about 50 samples/s per L40 -> 25.6M samples in about 1.5 days on 4 GPUs.
-FID: 15 min per Stage-2 checkpoint (10 sampler x weights combinations) and 20 min per field checkpoint on one GPU.
+An L40 is about 15 percent slower than an L40S. Use the largest per-GPU batch that fits (memory scales with it;
+16 fits on 46 GB for run 3) and keep BS * NGPU * ACCUM = 128. Until the Stage-2 rows are measured, plan on about
+5 samples/s per GPU for them: 10.24M samples in about 6 days on 4 GPUs, 3 days on 8. Your sanity checks 2 and 3
+print the real numbers for your machine; write them in `RUNLOG.md` before starting run 1.
+FID: about 15 min per Stage-2 checkpoint (10 sampler x weight combinations) and 20 min per field checkpoint on one GPU.
+Disk: a Stage-2 trainer checkpoint (model + EMA + optimizer) is 5.4 GB and a field checkpoint 5.4 GB; with the
+rolling 2 plus one permanent copy every 5k steps, budget 100 GB per Stage-2 run and 230 GB for run 3, plus 25 GB of
+samples if you keep the FID npz files. Check free space before every run; a full disk kills the save at the next
+checkpoint (we lost a smoke run to exactly that).
 
 ## 7. Abort criteria
 
