@@ -13,7 +13,7 @@ RFM_HF_REPO=EquilibriumMap/robotic-flow-maps-weights
 | what | where | credential |
 |---|---|---|
 | released weights + FID reference | https://huggingface.co/EquilibriumMap/robotic-flow-maps-weights (public) | none |
-| training data (latent cache, 21 GB) | wandb artifact `imagenet-latents-256` in the project | the key |
+| training data | built locally from the public mirror `evanarlian/imagenet_1k_resized_256` (docs/SETUP.md) | none |
 | your curves | https://wandb.ai/eqfm-handoff-carnegie-mellon-university/robotic-flow-maps | the key (viewing may need no login if the project is public) |
 | your checkpoints back to us | wandb artifacts named after the run, alias `step-<k>` | the key |
 

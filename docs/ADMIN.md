@@ -14,12 +14,12 @@ with `scripts/pack_offline_runs.sh`, then synced here with `wandb sync`.
 `ref_inception.npz`, manifest with the SiT-XL/2 sha256. Add releases with `python scripts/hf_upload.py --spec ...`
 (our token). The results repo `robotic-flow-maps-results` exists but is unused in the simple path.
 
-## Data and results: wandb artifacts under the shared account
-* Latent cache = dataset artifact `imagenet-latents-256` (uploaded by the CPU job rfm-upload-latents).
-* His checkpoints = model artifacts named after the run, alias `step-<k>` (`scripts/wandb_artifacts.py put`).
+## Data and results
+* Training data: he builds the latent cache himself from the ungated mirror `evanarlian/imagenet_1k_resized_256`
+  (docs/SETUP.md). We do not ship ImageNet-derived data. The private `eqfm-imagenet-distill` repo stays private.
+* His checkpoints = wandb model artifacts named after the run, alias `step-<k>` (`scripts/wandb_artifacts.py put`).
   Pull one here: `python scripts/wandb_artifacts.py get s2_shifted_meanflow:step-20000 --dest /data/.../s2_shifted_meanflow`.
-* Free-plan storage is 100 GB: latents 21 GB + about 6 EMA checkpoints per run (2.7 GB each) fits; delete old
-  artifact versions from the wandb UI if it fills up.
+  Free-plan storage is 100 GB: about 6 EMA checkpoints per run (2.7 GB each) fits; delete old versions in the wandb UI if needed.
 
 ## Offline runs coming back
 ```bash
