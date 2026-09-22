@@ -1,18 +1,13 @@
 # Maintainer setup (what only we can do)
 
-## wandb: one shared credential
-Our entity `mdrieux-carnegie-mellon-university` is a personal account and cannot hold a service
-account, so:
-
-1. wandb.ai -> profile menu -> **Create team** (academic teams are free): name e.g. `eqfm-handoff`.
-   Keep it separate from the entity that holds the paper runs.
-2. Team settings -> **Service accounts** -> create one -> copy its API key.
-   (If that tab is missing on the plan, create a plain bot wandb account on a throwaway mailbox and
-   use *its* key instead; functionally identical.)
-3. Team settings -> project `robotic-flow-maps` -> visibility **Public** after the first run has
-   created it, so anyone can read the curves without logging in.
-4. Send the friend (out of band, not in the repo): `WANDB_API_KEY=<key>`, `WANDB_ENTITY=<team>`.
-   Rotate the key from the same page when the collaboration ends.
+## wandb: one throwaway account (simple path)
+1. Sign up at https://wandb.ai/signup with a throwaway mailbox, username e.g. `eqfm-handoff`, free plan.
+   Copy the API key from https://wandb.ai/authorize.
+2. On the account's home page: **Create new project** -> `robotic-flow-maps`, visibility **Public**.
+3. Credentials for him: `WANDB_API_KEY=<that key>`, `WANDB_ENTITY=<the username>`. Rotate the key on the
+   authorize page (or delete the account) when the collaboration ends. Never hand out your own key.
+Alternative if live curves are not needed: leave `WANDB_API_KEY` empty; runs are logged offline and sent back
+with `scripts/pack_offline_runs.sh`, then synced here with `wandb sync`.
 
 ## Hugging Face: two repos, one token
 Both exist under the org, private (created 2026-09-22):
