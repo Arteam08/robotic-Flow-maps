@@ -221,13 +221,15 @@ Measured on one L40S (46 GB), fp32, TF32 off, from the latent cache (2026-09-22)
 |---|---|---|---|---|
 | run 3 (field b, SiT-XL/2) | 8 | 24 | | |
 | run 3 (field b, SiT-XL/2) | 16 | 31 | 25.6M / 124 per s = 57 h (2.4 days) | 1.2 days |
-| runs 1, A, B, C (shifted MeanFlow, single JVP) | 4 | pending measurement | | |
-| run 2 (shifted Lagrangian) | 4 | pending measurement | | |
+| run 1 (shifted MeanFlow, single JVP) | 4 | 4.8 | 10.24M / 19.2 per s = 148 h (6.2 days) | 3.1 days |
+| run 2 (shifted Lagrangian) | 4 | 4.3 | 6.9 days | 3.5 days |
+| add-on C (run 1 + eq + semigroup) | 4 | 3.6 | 8.2 days | 4.1 days |
+| run 1 with TF32 matmuls on (NOT the handoff setting) | 4 | 8.2 | 3.6 days | 1.8 days |
 
-An L40 is about 15 percent slower than an L40S. Use the largest per-GPU batch that fits (memory scales with it;
-16 fits on 46 GB for run 3) and keep BS * NGPU * ACCUM = 128. Until the Stage-2 rows are measured, plan on about
-5 samples/s per GPU for them: 10.24M samples in about 6 days on 4 GPUs, 3 days on 8. Your sanity checks 2 and 3
-print the real numbers for your machine; write them in `RUNLOG.md` before starting run 1.
+An L40 is about 15 percent slower than an L40S. Per-GPU batch 4 was used for the Stage-2 rows; try 8 on a 46 GB card
+and keep it if it fits and is faster (BS * NGPU * ACCUM = 128). The TF32 row is there so the cost of the fp32 decision
+is known (1.7x, losses identical to 4 decimals over 30 steps); it stays off unless we say otherwise. Your sanity
+checks 2 and 3 print the real numbers for your machine; write them in `RUNLOG.md` before starting run 1.
 FID: about 15 min per Stage-2 checkpoint (10 sampler x weight combinations) and 20 min per field checkpoint on one GPU.
 Disk: a Stage-2 trainer checkpoint (model + EMA + optimizer) is 5.4 GB and a field checkpoint 5.4 GB; with the
 rolling 2 plus one permanent copy every 5k steps, budget 100 GB per Stage-2 run and 230 GB for run 3, plus 25 GB of
