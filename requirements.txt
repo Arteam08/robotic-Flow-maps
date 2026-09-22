@@ -1,0 +1,39 @@
+# PyTorch CUDA 12.6 wheels.
+#
+# Why cu126 specifically:
+#   * Compatible with the L40S debug box (driver 575.51, CUDA 12.9).
+#   * Compatible with typical H100 production clusters (driver >= 560.28,
+#     CUDA 12.6) -- gives us margin if the H100 cluster is on an older
+#     driver than the L40S.
+#   * Includes sm_89 (L40S) and sm_90 (H100) kernels.
+#
+# Why the torch version cap (<2.9):
+#   With --extra-index-url, pip ranks 2.9.0 from PyPI (cu130-bundled)
+#   ABOVE 2.8.0+cu126 from this index, so an unbounded torch>=2.7 ends
+#   up installing a wheel that needs a driver supporting CUDA 13.0.
+#   Capping below 2.9 forces pip to pick the +cu126 wheel.
+#
+# If the H100 cluster has a much newer driver and you want cu128 perf,
+# bump --extra-index-url to /whl/cu128 and the upper bound accordingly.
+--extra-index-url https://download.pytorch.org/whl/cu126
+
+torch>=2.7,<2.9
+torchvision
+numpy
+einops
+timm>=0.9
+diffusers>=0.27
+accelerate
+huggingface_hub
+pillow
+tqdm
+pyyaml
+wandb
+webdataset>=0.2.86
+pytorch-fid>=0.3.0
+scipy
+torchdiffeq>=0.2.3
+pyarrow          # ImageNet parquet loader
+torch-fidelity   # tools/fid_adm (ADM-scale evaluator)
+pandas           # rfm.tracking.metrics_frame
+pytest

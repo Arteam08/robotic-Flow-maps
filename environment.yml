@@ -1,0 +1,19 @@
+# Mamba/conda environment for EqFM.
+#
+# Create:   mamba env create -f environment.yml
+# Update:   mamba env update -f environment.yml --prune
+# Activate: mamba activate eqfm
+#
+# We use conda only for Python + pip itself; the ML stack is installed via
+# pip from requirements.txt so the two install paths (pip-only and mamba)
+# stay in sync. The PyTorch CUDA 12.6 wheels in requirements.txt cover both
+# the L40S (sm_89) and the 8x H100 (sm_90) targets and run on any driver
+# supporting CUDA 12.6+ (driver >= 560.28).
+name: eqfm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - -r requirements.txt

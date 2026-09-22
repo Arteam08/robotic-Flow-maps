@@ -1,0 +1,13 @@
+.env
+results/
+weights/
+wandb/
+*.pt
+*.ckpt
+*.npz
+__pycache__/
+*.pyc
+offline_runs_*.tar.gz
+manifest.json
+logs/
+upload_spec*.json
