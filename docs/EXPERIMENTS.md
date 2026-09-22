@@ -34,10 +34,8 @@ python scripts/hf_download.py --dest weights
 # public SiT-XL/2 weights (2.7 GB): download, then verify against manifest.json "external"
 wget -O weights/SiT-XL-2-256x256.pt https://dl.fbaipublicfiles.com/sit/SiT-XL-2-256x256.pt
 sha256sum weights/SiT-XL-2-256x256.pt   # must equal the sha256 printed by: python scripts/hf_download.py --list
-# ImageNet-1k train as cached SD-VAE posteriors (294 shards, 21 GB, private repo, needs HF_TOKEN)
-hf download EquilibriumMap/eqfm-imagenet-distill --include "latents/*" --local-dir data/imagenet-latents-256-tmp \
-  && mv data/imagenet-latents-256-tmp/latents data/imagenet-latents-256
-# (older huggingface_hub: replace `hf download` by `huggingface-cli download`)
+# ImageNet-1k train as cached SD-VAE posteriors (294 shards, 21 GB), wandb artifact, needs the key in .env
+python scripts/wandb_artifacts.py get imagenet-latents-256:latest --dest data/imagenet-latents-256
 ls data/imagenet-latents-256 | wc -l    # 294
 ```
 
@@ -139,11 +137,10 @@ Not in scope: teacher-free (self-distillation) variants. Do not run them.
   (`kept/` every 5k) until we say otherwise.
 - **FID** (section 5): every 5 000 steps, both weights, all samplers. Paste the summary lines in the wandb
   run notes and keep `$FIDOUT/<run>/step<k>/.../adm_fid.json`.
-- **Upload to `EquilibriumMap/robotic-flow-maps-results/<run>/`**: the EMA checkpoint at every 20 000 steps
-  and raw + EMA at the final step, plus the FID json files. Command, after writing the spec (see
-  `scripts/hf_upload.py` docstring):
-  `python scripts/hf_upload.py --repo EquilibriumMap/robotic-flow-maps-results --spec spec_<run>.json`
-  with `"dest": "<run>/<file>"`. Never upload the 1k-step rolling checkpoints.
+- **Upload as wandb artifacts** (same key, nothing else): the EMA checkpoint at every 20 000 steps and raw + EMA
+  at the final step, one command each:
+  `python scripts/wandb_artifacts.py put results/<run>/kept/step_0020000.pt --name <run> --type model --alias step-20000 --note "EMA; FID-2k K8 <value>"`
+  Put the FID json files of that step in the note or in the run's wandb notes. Never upload the 1k-step rolling checkpoints.
 
 ## 5. Evaluation protocol and reference numbers
 

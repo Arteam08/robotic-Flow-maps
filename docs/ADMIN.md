@@ -9,23 +9,17 @@
 Alternative if live curves are not needed: leave `WANDB_API_KEY` empty; runs are logged offline and sent back
 with `scripts/pack_offline_runs.sh`, then synced here with `wandb sync`.
 
-## Hugging Face: two repos, one token
-Both exist under the org, private (created 2026-09-22):
-* `EquilibriumMap/robotic-flow-maps-weights`  released weights, read-only for him. README + manifest.json.
-* `EquilibriumMap/robotic-flow-maps-results`  his checkpoints, one folder per run name, per-run manifest.json
-  written by `Tracker.log_checkpoint`.
+## Hugging Face: nothing for him to set up
+`EquilibriumMap/robotic-flow-maps-weights` is PUBLIC (made public 2026-09-22): `stage1_eqmft_B30k_ema.pt`,
+`ref_inception.npz`, manifest with the SiT-XL/2 sha256. Add releases with `python scripts/hf_upload.py --spec ...`
+(our token). The results repo `robotic-flow-maps-results` exists but is unused in the simple path.
 
-1. Release weights with `python scripts/hf_upload.py --spec upload_spec.json` (spec format in the
-   docstring; our own write token in `HF_TOKEN`). Only EMA weights, one file per milestone.
-2. Token for him: huggingface.co -> Settings -> Access Tokens -> **Create new token** -> Fine-grained:
-   Repositories -> select `robotic-flow-maps-weights` (read) and `robotic-flow-maps-results`
-   (read + write). No user or org permissions. Name it after him so it can be revoked alone.
-   If the org repos do not appear in the picker, create a bot HF account, add it to the org with
-   write on the results repo, and issue the token from that account instead.
-3. Fill `docs/CREDENTIALS_TEMPLATE.md` and send it out of band (not in git, not in an issue).
-4. When the release list is final: weights repo Settings -> **Make public** (then the download
-   needs no token at all). The results repo can stay private.
-5. Never Git-LFS weights into the GitHub repo (1 GB/month bandwidth cap).
+## Data and results: wandb artifacts under the shared account
+* Latent cache = dataset artifact `imagenet-latents-256` (uploaded by the CPU job rfm-upload-latents).
+* His checkpoints = model artifacts named after the run, alias `step-<k>` (`scripts/wandb_artifacts.py put`).
+  Pull one here: `python scripts/wandb_artifacts.py get s2_shifted_meanflow:step-20000 --dest /data/.../s2_shifted_meanflow`.
+* Free-plan storage is 100 GB: latents 21 GB + about 6 EMA checkpoints per run (2.7 GB each) fits; delete old
+  artifact versions from the wandb UI if it fills up.
 
 ## Offline runs coming back
 ```bash
