@@ -19,6 +19,8 @@ export GLOBAL_BATCH=128                      # fixed by the handoff; do not chan
 export BS=${BS:-$((GLOBAL_BATCH / NGPU))}    # per-GPU micro-batch
 export ACCUM=${ACCUM:-1}                     # raise if BS does not fit: BS * NGPU * ACCUM must equal 128
 [ $((BS * NGPU * ACCUM)) -eq $GLOBAL_BATCH ] || { echo "BS*NGPU*ACCUM must be $GLOBAL_BATCH"; exit 1; }
+export FID_GPU=${FID_GPU:-}                  # GPU index for the automatic FID at every kept checkpoint (default: last GPU)
+export FID_BATCH=${FID_BATCH:-}              # sample batch for those automatic FIDs (default 25, shares the GPU with training)
 export NCCL_P2P_DISABLE=${NCCL_P2P_DISABLE:-1}   # multi-GPU L40/L40S nodes hang in DDP init without it
 export PY=${PY:-python}
 TORCHRUN="$PY -m torch.distributed.run --standalone --nproc_per_node=$NGPU"

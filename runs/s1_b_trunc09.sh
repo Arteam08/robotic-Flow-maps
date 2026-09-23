@@ -2,7 +2,7 @@
 # main run 3: autonomous field b from the public SiT-XL/2 weights, truncated clock a = 0.9, 200k steps.
 # Resumable: re-running continues from $RESULTS/s1_b_trunc09/checkpoints/latest.pt.
 . "$(dirname "$0")/env.sh"
-exec $TORCHRUN scripts/train_stage1_eqm.py --results-dir "$RESULTS" --run-name s1_b_trunc09 --resume \
+exec $TORCHRUN scripts/train_stage1_eqm.py --results-dir "$RESULTS" --run-name s1_b_trunc09 --resume --on-keep-cmd "$PWD/runs/fid_on_keep.sh s1_b_trunc09 {step}" \
   --shards latents:$LATENTS --num-workers 2 \
   --ckpt "$SIT" --ckpt-key auto --init-output-scale 1 --vae-id stabilityai/sd-vae-ft-ema \
   --time-conditioning strict --parameterization velocity \

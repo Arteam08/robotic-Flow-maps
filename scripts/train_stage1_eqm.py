@@ -281,6 +281,8 @@ def parse_args() -> argparse.Namespace:
     # Validation sampling (EMA, fixed seed + classes so samples track over time)
     p.add_argument("--val-every", type=int, default=1000,
                    help="Run validation sampling every N steps. 0 disables.")
+    p.add_argument("--on-keep-cmd", type=str, default=None,
+                   help="Shell command run (detached) after every kept checkpoint; {ckpt} and {step} are substituted.")
     p.add_argument("--keep-every", type=int, default=0,
                    help="Never prune step_*.pt whose step is a multiple of "
                         "this (0: prune purely by --keep-last-checkpoints).")
@@ -1145,6 +1147,14 @@ def main() -> None:
         if (step + 1) % args.save_every == 0 or (step + 1) == args.steps:
             if is_main:
                 path = save_checkpoint(run_dir, step + 1, base_model, ema, optimizer, args)
+                if args.on_keep_cmd and args.keep_every > 0 and (step + 1) % args.keep_every == 0:
+                    import subprocess
+                    cmd = args.on_keep_cmd.format(ckpt=path, step=step + 1)
+                    try:
+                        subprocess.Popen(cmd, shell=True, start_new_session=True)
+                        print(f"[stage1] on-keep: {cmd}", flush=True)
+                    except OSError as e:
+                        print(f"[stage1] WARN on-keep command failed: {e!r}", flush=True)
                 print(f"[stage1] saved checkpoint -> {path}")
                 save_checkpoint(run_dir, step + 1, base_model, ema, optimizer, args, tag="latest")
                 _cleanup_old_checkpoints(run_dir, args.keep_last_checkpoints, args.keep_every)
