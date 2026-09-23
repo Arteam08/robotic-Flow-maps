@@ -11,6 +11,7 @@ export LATENTS=${LATENTS:-$PWD/data/imagenet-latents-256}     # 294 shard_*.npz 
 export RESULTS=${RESULTS:-$PWD/results}                       # run dirs: $RESULTS/<run name>/
 export FIDOUT=${FIDOUT:-$PWD/results/fid}                     # FID sample dirs
 export EQFM_REF_INCEPTION=${EQFM_REF_INCEPTION:-$WEIGHTS/ref_inception.npz}
+export EQFM_FID_ROOT=$FIDOUT                              # trainers and scripts/log_fid_wandb.py read FIDs from here
 
 # --- hardware (edit) ---
 export NGPU=${NGPU:-4}                       # GPUs on this machine used by torchrun
