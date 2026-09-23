@@ -20,7 +20,7 @@ for W in raw ema; do for spec in "${SAMPLERS[@]}"; do
   name=${spec%%:*}; extra=${spec#*:}; d=$FIDOUT/$RUN/step${STEP}_${W}_n${N}/$name; mkdir -p $d
   [ -f $d/adm_fid.json ] && { echo "done    $RUN step $STEP $W $name: $(cat $d/adm_fid.json)"; continue; }
   $PY scripts/eval_fid_stage2_flowmap.py --ckpt "$CKPT" --weights $W --model SiT-XL/2 --output-dir $d \
-    --num-samples $N --batch-size ${FID_BATCH:-100} --seed 0 --skip-pytorch-fid --save-samples-npz $d/samples.npz --no-bf16 $extra
+    --num-samples $N --batch-size ${FID_BATCH:-100} --seed 0 --skip-pytorch-fid --save-samples-npz $d/samples.npz --bf16 $extra
   $PY tools/fid_adm/score_npz.py --ref-cache "$EQFM_REF_INCEPTION" $d/samples.npz
   echo "FID-2k  $RUN step $STEP $W $name: $(cat $d/adm_fid.json)"
 done; done
