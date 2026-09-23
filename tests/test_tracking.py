@@ -19,6 +19,7 @@ tr.log_checkpoint(p, step=2)
 tr.finish()
 """
     env = {k: v for k, v in os.environ.items() if not k.startswith("WANDB")}
+    env["RFM_NO_DOTENV"] = "1"   # a real .env with a key must not turn this test online
     env.update(env_extra)
     subprocess.run([sys.executable, "-c", code], check=True, env=env, cwd=tmp_path)
     rows = [json.loads(l) for l in open(tmp_path / "run0" / "metrics.jsonl")]

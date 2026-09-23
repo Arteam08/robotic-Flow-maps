@@ -43,7 +43,7 @@ def load_dotenv(path: Optional[Path] = None) -> Dict[str, str]:
     """Read ``.env`` (repo root by default) into os.environ without overriding existing vars."""
     path = path or (Path(__file__).resolve().parent.parent / ".env")
     loaded: Dict[str, str] = {}
-    if not path.exists():
+    if os.environ.get("RFM_NO_DOTENV") or not path.exists():   # RFM_NO_DOTENV=1: ignore .env (tests)
         return loaded
     for line in path.read_text().splitlines():
         line = line.strip()
