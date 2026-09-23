@@ -46,7 +46,10 @@ resume; shards whose npz exists are skipped. `--verify 64` re-encodes the first 
 and checks them. The mirror's JPEGs are pre-resized, so these latents differ slightly from the ones our fields were
 trained on; this is fine for distillation and is stated in the results. Do not redistribute the cache.
 
-Checkpoints you produce go back the same way, one command per milestone (EMA every 20k steps, raw + EMA at the end):
+Checkpoints can also go to Hugging Face if you were given `HF_TOKEN` (write on `EquilibriumMap/robotic-flow-maps-results`):
+put `HF_TOKEN` and `RFM_HF_RESULTS_REPO` in `.env`, then
+`python scripts/hf_upload.py --repo $RFM_HF_RESULTS_REPO --spec spec.json` with `"dest": "<run>/<file>"` entries
+(see the script docstring), or let `rfm.tracking.Tracker.log_checkpoint` do it. Otherwise checkpoints go back the same way, one command per milestone (EMA every 20k steps, raw + EMA at the end):
 ```bash
 python scripts/wandb_artifacts.py put results/<run>/kept/step_0020000.pt --name <run> --type model --alias step-20000 --note "EMA; FID-2k K8 18.9"
 ```
